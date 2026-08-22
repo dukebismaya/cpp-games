@@ -1,4 +1,5 @@
 #include "raylib.h"
+#include <string>
 
 constexpr int SCREEN_HEIGHT = 450;
 constexpr int SCREEN_WIDTH = 800;
@@ -42,6 +43,10 @@ public:
   BismayaEngine() {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Packet-Braker C++");
     SetTargetFPS(60);
+
+    ball.position = {player.position.x,
+                     player.position.y - (player.position.y / 2) - ball.radius};
+
     gameOver = false;
     pause = false;
   }
@@ -61,8 +66,13 @@ public:
   void draw() {
     BeginDrawing();
     ClearBackground(RAYWHITE);
-    DrawText("BismayaEngine is Running. Ready to draw entities.", 200, 200, 20,
-             DARKGRAY);
+    DrawRectangle((int)(player.position.x - player.size.x / 2),
+                  (int)(player.position.y - player.size.y / 2),
+                  (int)player.size.x, (int)player.size.y, BLACK);
+    DrawCircleV(ball.position, static_cast<float>(ball.radius), BLUE);
+    std::string instruction{"Press SPACE to launch the ball"};
+    DrawText(instruction.c_str(), (SCREEN_WIDTH / 2) - 150, SCREEN_HEIGHT - 20,
+             20, DARKGRAY);
     EndDrawing();
   }
 };
