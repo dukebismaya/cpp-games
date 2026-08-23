@@ -83,6 +83,24 @@ public:
       } else {
         ball.position.x += ball.speed.x;
         ball.position.y += ball.speed.y;
+
+        // Left and right boundary
+        if (((ball.position.x + ball.radius) >= SCREEN_WIDTH) ||
+            ((ball.position.x - ball.radius) <= 0))
+          ball.speed.x *= -1.0f;
+
+        // Top boundary
+        if (ball.position.y - ball.radius <= 0)
+          ball.speed.y *= -1.0f;
+
+        // Bottom boundary (loss condition)
+        if ((ball.position.y + ball.radius) >= SCREEN_HEIGHT) {
+          ball.speed = {0, 0};
+          ball.active = false;
+          player.life--;
+          if (player.life <= 0)
+            gameOver = true;
+        }
       }
     }
   }
