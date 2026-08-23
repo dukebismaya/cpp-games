@@ -61,15 +61,30 @@ public:
   }
 
   void update() {
-    // Player Movement
-    if (IsKeyDown(KEY_LEFT))
-      player.position.x -= 5.0f;
-    if (IsKeyDown(KEY_RIGHT))
-      player.position.x += 5.0f;
-    if ((player.position.x - player.size.x / 2) <= 0)
-      player.position.x = player.size.x / 2;
-    if ((player.position.x + player.size.x / 2) >= SCREEN_WIDTH)
-      player.position.x = SCREEN_WIDTH - player.size.x / 2;
+    if (!gameOver && !pause) {
+      // Player Movement
+      if (IsKeyDown(KEY_LEFT))
+        player.position.x -= 5.0f;
+      if (IsKeyDown(KEY_RIGHT))
+        player.position.x += 5.0f;
+      if ((player.position.x - player.size.x / 2) <= 0)
+        player.position.x = player.size.x / 2;
+      if ((player.position.x + player.size.x / 2) >= SCREEN_WIDTH)
+        player.position.x = SCREEN_WIDTH - player.size.x / 2;
+
+      // Ball launch and trajectory
+      if (!ball.active) {
+        ball.position = {player.position.x,
+                         player.position.y - (player.size.y / 2) - ball.radius};
+        if (IsKeyPressed(KEY_SPACE)) {
+          ball.active = true;
+          ball.speed = {0.0f, -5.0f}; // 5 pixels UP per frame
+        }
+      } else {
+        ball.position.x += ball.speed.x;
+        ball.position.y += ball.speed.y;
+      }
+    }
   }
 
   void draw() {
