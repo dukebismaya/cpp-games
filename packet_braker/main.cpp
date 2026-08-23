@@ -69,7 +69,7 @@ public:
 
     for (int i = 0; i < LINES_OF_BRICKS; ++i) {
       for (int j = 0; j < BRICKS_PER_LINE; ++j) {
-        auto curr_brick = brick[i][j];
+        auto &curr_brick = brick[i][j];
         curr_brick.position = {j * brickSize.x + brickSize.x / 2,
                                i * brickSize.y + initialDownPosition};
         curr_brick.active = true;
@@ -157,6 +157,22 @@ public:
                   (int)(player.position.y - player.size.y / 2),
                   (int)player.size.x, (int)player.size.y, WHITE);
     DrawCircleV(ball.position, static_cast<float>(ball.radius), BLUE);
+
+    // Drawing Bricks
+    for (int i = 0; i < LINES_OF_BRICKS; ++i) {
+      for (int j = 0; j < BRICKS_PER_LINE; ++j) {
+        const auto &curr_brick = brick[i][j];
+        if (curr_brick.active) {
+          Color brickColor = ((i + j) % 2 == 0) ? GRAY : DARKGRAY;
+          DrawRectangle(
+              static_cast<int>(curr_brick.position.x - brickSize.x / 2),
+              static_cast<int>(curr_brick.position.y - brickSize.y / 2),
+              static_cast<int>(brickSize.x), static_cast<int>(brickSize.y),
+              brickColor);
+        }
+      }
+    }
+
     if (enable_instructions) {
       std::string instruction{"Press SPACE to launch the ball"};
       DrawText(instruction.c_str(), (SCREEN_WIDTH / 2) - 150,
