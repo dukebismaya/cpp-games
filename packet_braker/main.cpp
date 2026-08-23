@@ -5,6 +5,8 @@
 constexpr int SCREEN_HEIGHT = 450;
 constexpr int SCREEN_WIDTH = 800;
 constexpr int PLAYER_MAX_LIFE = 5;
+constexpr int LINES_OF_BRICKS = 5;
+constexpr int BRICKS_PER_LINE = 20;
 
 class Player {
 public:
@@ -33,10 +35,24 @@ public:
   }
 };
 
+class Brick {
+public:
+  Vector2 brickSize;
+  Vector2 position;
+  Color brickColor;
+  bool active;
+  Brick() {
+    position = {0, 0};
+    active = false;
+  };
+};
+
 class BismayaEngine {
 private:
   Player player;
   Ball ball;
+  Brick brick[LINES_OF_BRICKS][BRICKS_PER_LINE];
+  Vector2 brickSize;
   bool gameOver;
   bool pause;
   bool enable_instructions;
@@ -48,6 +64,17 @@ public:
 
     ball.position = {player.position.x,
                      player.position.y - (player.position.y / 2) - ball.radius};
+    brickSize = {(float)SCREEN_WIDTH / BRICKS_PER_LINE, 40.0f};
+    int initialDownPosition = 50;
+
+    for (int i = 0; i < LINES_OF_BRICKS; ++i) {
+      for (int j = 0; j < BRICKS_PER_LINE; ++j) {
+        auto curr_brick = brick[i][j];
+        curr_brick.position = {j * brickSize.x + brickSize.x / 2,
+                               i * brickSize.y + initialDownPosition};
+        curr_brick.active = true;
+      }
+    }
 
     gameOver = false;
     pause = false;
