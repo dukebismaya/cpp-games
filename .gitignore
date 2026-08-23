@@ -17,3 +17,6 @@ Thumbs.db
 
 # Cache
 .cache/
+
+# Other
+.clangd

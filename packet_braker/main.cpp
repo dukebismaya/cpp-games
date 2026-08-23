@@ -1,4 +1,5 @@
 #include "raylib.h"
+#include <cstddef>
 #include <string>
 
 constexpr int SCREEN_HEIGHT = 450;
@@ -54,13 +55,21 @@ public:
 
   void run() {
     while (!WindowShouldClose()) {
-      Update();
+      update();
       draw();
     }
   }
 
-  void Update() {
-    // I will write later.
+  void update() {
+    // Player Movement
+    if (IsKeyDown(KEY_LEFT))
+      player.position.x -= 5.0f;
+    if (IsKeyDown(KEY_RIGHT))
+      player.position.x += 5.0f;
+    if ((player.position.x - player.size.x / 2) <= 0)
+      player.position.x = player.size.x / 2;
+    if ((player.position.x + player.size.x / 2) >= SCREEN_WIDTH)
+      player.position.x = SCREEN_WIDTH - player.size.x / 2;
   }
 
   void draw() {
