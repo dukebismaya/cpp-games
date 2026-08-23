@@ -39,6 +39,7 @@ private:
   Ball ball;
   bool gameOver;
   bool pause;
+  bool enable_instructions;
 
 public:
   BismayaEngine() {
@@ -50,6 +51,7 @@ public:
 
     gameOver = false;
     pause = false;
+    enable_instructions = true;
   }
   ~BismayaEngine() { CloseWindow(); }
 
@@ -74,6 +76,7 @@ public:
 
       // Ball launch and trajectory
       if (!ball.active) {
+        enable_instructions = true;
         ball.position = {player.position.x,
                          player.position.y - (player.size.y / 2) - ball.radius};
         if (IsKeyPressed(KEY_SPACE)) {
@@ -81,6 +84,7 @@ public:
           ball.speed = {0.0f, -5.0f}; // 5 pixels UP per frame
         }
       } else {
+        enable_instructions = false;
         ball.position.x += ball.speed.x;
         ball.position.y += ball.speed.y;
 
@@ -101,20 +105,36 @@ public:
           if (player.life <= 0)
             gameOver = true;
         }
+
+        // Paddle/player rectangle bound
+        Rectangle paddleRec = {player.position.x - player.size.x / 2,
+                               player.position.y - player.size.y / 2,
+                               player.size.x, player.size.y};
+        if (CheckCollisionCircleRec(
+                ball.position, static_cast<float>(ball.radius), paddleRec)) {
+          if (ball.speed.y > 0) {
+            ball.speed.y *= -1.0f;
+
+            ball.speed.x = (ball.position.x - player.position.x) /
+                           (player.size.x / 2) * 5.0f;
+          }
+        }
       }
     }
   }
 
   void draw() {
     BeginDrawing();
-    ClearBackground(RAYWHITE);
+    ClearBackground(BLACK);
     DrawRectangle((int)(player.position.x - player.size.x / 2),
                   (int)(player.position.y - player.size.y / 2),
-                  (int)player.size.x, (int)player.size.y, BLACK);
+                  (int)player.size.x, (int)player.size.y, WHITE);
     DrawCircleV(ball.position, static_cast<float>(ball.radius), BLUE);
-    std::string instruction{"Press SPACE to launch the ball"};
-    DrawText(instruction.c_str(), (SCREEN_WIDTH / 2) - 150, SCREEN_HEIGHT - 20,
-             20, DARKGRAY);
+    if (enable_instructions) {
+      std::string instruction{"Press SPACE to launch the ball"};
+      DrawText(instruction.c_str(), (SCREEN_WIDTH / 2) - 150,
+               SCREEN_HEIGHT - 20, 20, DARKGRAY);
+    }
     EndDrawing();
   }
 };
